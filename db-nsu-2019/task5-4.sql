@@ -10,32 +10,34 @@ CREATE TABLE _nodes
 
 CREATE TABLE _files
 (
-    id       SERIAL NOT NULL PRIMARY KEY,
-    name     VARCHAR,
-    pid      INT    NOT NULL,
-    node_id  INT    NOT NULL,
+    id       SERIAL  NOT NULL,
+    name     VARCHAR NOT NULL,
+    pid      INT     NOT NULL,
+    node_id  INT     NOT NULL,
     size     INT,
     created  DATE,
-    written  DATE   NOT NULL,
+    written  DATE    NOT NULL,
     modified DATE,
+    PRIMARY KEY (id, name, node_id),
     FOREIGN KEY (node_id) REFERENCES _nodes (id)
 );
 
 INSERT INTO _nodes (path)
-VALUES ('A'),
-       ('B'),
-       ('C');
+VALUES ('first comp'),
+       ('second comp'),
+       ('server');
 
 INSERT INTO _files (name, pid, node_id, size, created, written, modified)
-VALUES ('a', 0, 1, 1000, '2018-01-01', '2018-05-23', '2018-01-01');
-INSERT INTO _files (name, pid, node_id, size, created, written, modified)
-VALUES ('aa', 1, 1, 1000, '2018-01-01', '2018-05-23', '2018-01-01');
-INSERT INTO _files (name, pid, node_id, size, created, written, modified)
-VALUES ('b', 2, 2, 1000, '2018-01-01', '2018-05-23', '2018-01-01');
+VALUES ('new folder', 0, 1, 1000, '2018-01-01', '2018-05-23', '2018-01-01'),
+       ('mycomp', 0, 1, 1000, '2018-01-01', '2018-05-23', '2018-01-01'),
+       ('sql', 1, 2, 1000, '2018-01-01', '2018-05-23', '2018-01-01'),
+       ('sql1', 1, 1, 1000, '2018-01-01', '2018-05-23', '2018-01-01'),
+       ('sql2', 1, 2, 1000, '2018-01-01', '2018-05-23', '2018-01-01'),
+       ('sql3', 1, 3, 1000, '2018-01-01', '2018-05-23', '2018-01-01'),
+       ('sql', 2, 2, 1000, '2018-01-01', '2018-05-23', '2018-01-01'),
+       ('old', 2, 2, 1000, '2018-01-01', '2018-05-23', '2018-01-01');
 
 --5.4: functions
-
-DROP FUNCTION IF EXISTS find();
 
 CREATE OR REPLACE FUNCTION get_id(path VARCHAR, dir INT)
     RETURNS INT AS
@@ -64,6 +66,9 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+SELECT *
+FROM get_id('sql', 1);
+--******************************************************
 
 CREATE OR REPLACE FUNCTION get_full_path(fid INT)
     RETURNS VARCHAR AS
@@ -84,6 +89,10 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+SELECT *
+FROM get_full_path(get_id('sql', 1));
+--******************************************************
+
 CREATE OR REPLACE FUNCTION get_depth(s VARCHAR)
     RETURNS INT AS
 $$
@@ -92,6 +101,9 @@ BEGIN
 end;
 $$ LANGUAGE plpgsql;
 
+SELECT *
+FROM get_depth('a/a/a/a/a');
+--******************************************************
 
 CREATE OR REPLACE FUNCTION touch(fname VARCHAR, dirname VARCHAR, fnode INT, fsize INT, fcreated DATE, fchanged DATE)
     RETURNS VARCHAR AS
@@ -115,6 +127,13 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+SELECT *
+FROM touch('hello', 'new folder', 1, 1024, now()::TIMESTAMP::date, now()::TIMESTAMP::date);
+
+SELECT *
+FROM _files;
+--******************************************************
+
 CREATE OR REPLACE FUNCTION remove(fname VARCHAR)
     RETURNS VARCHAR AS
 $$
@@ -125,11 +144,23 @@ BEGIN
     IF fid = -1 THEN
         RETURN 'The file does not exist';
     ELSE
-        DELETE FROM _files CASCADE WHERE id = fid;
-        RETURN 'OK';
+        IF ((SELECT COUNT(*) FROM _files WHERE pid = get_id(fname, 0)) <> 0) THEN
+            RETURN 'This file have depends';
+        ELSE
+            DELETE FROM _files CASCADE WHERE id = fid;
+            RETURN 'OK';
+        END IF;
     END IF;
 END;
 $$ LANGUAGE plpgsql;
+
+SELECT *
+FROM _files;
+SELECT *
+FROM remove('new folder/sql2');
+SELECT *
+FROM _files;
+--************************************************
 
 CREATE OR REPLACE FUNCTION ls(dirname VARCHAR)
     RETURNS SETOF _files AS
@@ -151,6 +182,10 @@ BEGIN
     END IF;
 END;
 $$ LANGUAGE plpgsql;
+
+SELECT *
+FROM ls('mycomp');
+--************************************************************
 
 CREATE OR REPLACE FUNCTION rename(fname VARCHAR, new_name VARCHAR)
     RETURNS VARCHAR AS
@@ -176,6 +211,15 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+select *
+from _files;
+select *
+from rename('mycomp/sql', 'nadoelo');
+select *
+from _files;
+
+--************************************************************
+
 CREATE OR REPLACE FUNCTION move(fname VARCHAR, dirname VARCHAR)
     RETURNS VARCHAR AS
 $$
@@ -196,13 +240,24 @@ BEGIN
             IF EXISTS(SELECT * FROM _files WHERE _files.name = fn AND _files.pid = dir) THEN
                 RETURN 'The files with this name already exists in this folder';
             ELSE
-                UPDATE _files SET pid = new_pid, modified = now() WHERE fid = id;
+                UPDATE _files SET pid = dir, modified = now() WHERE fid = id;
                 RETURN 'OK';
             END IF;
         END IF;
     END IF;
 END;
 $$ LANGUAGE plpgsql;
+
+SELECT *
+FROM _files;
+SELECT *
+FROM move('mycomp/nadoelo', '');
+SELECT *
+FROM _files;
+SELECT *
+FROM ls('');
+
+--****************--*****************--*****************--*****************
 
 CREATE OR REPLACE FUNCTION find(mask VARCHAR, depth INT)
     RETURNS SETOF VARCHAR AS
@@ -215,3 +270,8 @@ BEGIN
           AND (SELECT get_depth(p.path)) < depth + 1;
 END;
 $$ LANGUAGE plpgsql;
+
+SELECT * from _files;
+
+SELECT *
+FROM find('%sql%', 1);

@@ -71,6 +71,7 @@ VALUES ('Поддержка', 'Task1', 12, 'new', 'a.berkut', 's.petrova', NULL,
        ('СС.Контент', 'Task14', 20, 'new', 'a.makenroy', 'a.kasatkin', '2015/8/3', 22, 3),
        ('СС.Контент', 'Task15', 20, 'new', 'a.makenroy', NULL, '2015/12/3', NULL, NULL);
 
+select * from _Tasks;
 
 DROP TABLE IF EXISTS _Tasks_cache CASCADE;
 
@@ -133,12 +134,15 @@ EXECUTE PROCEDURE modification();
 
 
 INSERT INTO _Tasks(project, header, priority, status, creator, responsible, date_on, estimate, spent)
-VALUES ('Поддержка','Task122', 12, 'new', 'a.berkut', 's.petrova', NULL, 10, 15),
+VALUES ('Поддержка', 'Task122', 12, 'new', 'a.berkut', 's.petrova', NULL, 10, 15),
        ('Демо-Сибирь', 'Task22', 228, 'new', 'v.belova', 's.petrova', NULL, 52, 22);
 
 DELETE
 FROM _Tasks
 WHERE priority = 228;
+
+SELECT *
+FROM _Tasks;
 
 SELECT *
 FROM _Tasks_cache;
@@ -155,7 +159,9 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-UPDATE _Tasks SET priority=17 WHERE header='Task122';
+UPDATE _Tasks
+SET priority=17
+WHERE header = 'Task122';
 
 SELECT *
 FROM task_history('Поддержка', 'Task122');
@@ -170,7 +176,8 @@ DECLARE
     new _Tasks_cache%ROWTYPE;
     old _Tasks_cache%ROWTYPE;
 BEGIN
-    SELECT * FROM _Tasks_cache WHERE sur_key = rid INTO new;
+    SELECT * FROM _Tasks_cache --WHERE t_id = rid INTO new;
+    WHERE sur_key = (SELECT MAX(sur_key) FROM _Tasks_cache AS int WHERE t_id = rid) INTO new;
     SELECT *
     FROM _Tasks_cache
     WHERE project = new.project
@@ -188,8 +195,8 @@ BEGIN
         RETURN 'Restore failed';
     END IF;
     IF old.exists AND not new.exists THEN
-        INSERT INTO _Tasks(project, header, priority, status, creator, responsible, date_on, estimate, spent)
-        VALUES (old.project, old.header, old.priority, old.status, old.creator, old.responsible,
+        INSERT INTO _Tasks(sur_key, project, header, priority, status, creator, responsible, date_on, estimate, spent)
+        VALUES (old.t_id, old.project, old.header, old.priority, old.status, old.creator, old.responsible,
                 old.date_on, old.estimate, old.spent);
     ELSE
         IF NOT old.exists AND new.exists THEN
@@ -197,7 +204,9 @@ BEGIN
         ELSE
             IF old.exists AND new.exists THEN
                 UPDATE _Tasks
-                SET priority    = old.priority,
+                SET
+                    sur_key = old.t_id,
+                    priority    = old.priority,
                     description = old.description,
                     status      = old.status,
                     estimate    = old.estimate,
@@ -218,27 +227,37 @@ $$ LANGUAGE plpgsql;
 SELECT *
 FROM _Tasks_cache;
 
-UPDATE _Tasks SET priority=99 WHERE header='Task122';
+UPDATE _Tasks
+SET priority=99
+WHERE header = 'Task122';
 
 SELECT *
 FROM _Tasks_cache;
 
 SELECT *
-FROM revert_change(6);
+FROM revert_change(16);
 
 SELECT *
 FROM _Tasks_cache;
 
-SELECT * FROM _Tasks;
+SELECT *
+FROM _Tasks;
 
 ------------------------------
 
-DELETE FROM _Tasks WHERE header = 'Task122';
+DELETE
+FROM _Tasks
+WHERE header = 'Task122';
 
-select * from _Tasks;
+select *
+from _Tasks;
 
-Select * from _Tasks_cache;
+Select *
+from _Tasks_cache;
 
 SELECT *
-FROM revert_change(10);
+FROM revert_change(16);
+
+select *
+from _Tasks;
 
