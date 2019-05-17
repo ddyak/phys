@@ -11,10 +11,9 @@ class User:
 
 
 if __name__ == "__main__":
-    ddyak5 = User(role=Role.courier, login='ddyakovlev', password='hello', firstName='Che', secondName='Lal', phone='8')
-    ddyak = User(role=Role.client, login='ddyakovlev', password='hello')
-
+    ddyak = User(role=Role.courier, login='ddyak', password='hello', firstName='Che', secondName='Lal', phone='8')
     db = DBcontroller()
-    db.add_user(ddyak)
+    db.register_user(ddyak)
+    db.authentication(ddyak)
     db.add_address(14, 'Pirogova')
-    db.get_user(Role.client)
+    db.get_all_users(Role.client)
