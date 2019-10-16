@@ -1,3 +1,4 @@
+.nolist
 .include "m2560def.inc"
 
 .org 0X0000
