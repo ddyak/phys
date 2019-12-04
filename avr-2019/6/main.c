@@ -3,18 +3,25 @@
 #include <util/delay.h>
 #include <avr/interrupt.h>
 
+#include <stdlib.h>
+
 #include "spi.h"
 #include "game.h"
 
 volatile uint16_t ms_passed = 0;
 volatile field Field;
+volatile int gameOverFlag = 0;
 
 ISR(TIMER0_COMPA_vect) {
     cli();
     ms_passed += 1;
     ms_passed %= 41;
-    if (ms_passed == 40)
-        drawField();  
+    if (ms_passed == 40) {
+        generate_meteor();
+        gameOverFlag = drawField();
+        if (!gameOverFlag)
+            updater();
+    }
     sei();
 }
 
@@ -25,8 +32,8 @@ ISR(INT0_vect) {
 }
 
 void ADC_Init() {
- 	ADMUX |= (1<<REFS0) | (1<<ADLAR);
- 	ADCSRA |= (1<<ADSC) | (1<<ADEN) | (1<<ADATE);
+ 	ADMUX  |= (1 << REFS0) | (1 << ADLAR);
+ 	ADCSRA |= (1 << ADSC)  | (1 << ADEN) | (1 << ADATE);
 }
 
 void MAX7219_Init() {
@@ -58,13 +65,17 @@ int main() {
     MAX7219_Init();
     TIMER0_Init();
     BUTTON_Init();
-    clear();
     sei();
-    
+
+    FIELD_Init();
+
     while(1) {
+        if (gameOverFlag == 1) break;
     	uint8_t high = ADCH;
         uint8_t x = high / 32;
-        Field.ship = x;
+        if ((high % 32) > 4 && (high % 32) < 28)
+            Field.ship = x;
     }
-    
+    cli();
+    // sound and UART instraction;
 }
