@@ -7,20 +7,22 @@
 
 #include "spi.h"
 #include "game.h"
+#include "uart.h"
 
-volatile uint16_t ms_passed = 0;
+volatile uint32_t ms_passed = 0;
 volatile field Field;
 volatile int gameOverFlag = 0;
+
+const uint8_t MS_PER_FRAME = 25;
 
 ISR(TIMER0_COMPA_vect) {
     cli();
     ms_passed += 1;
-    ms_passed %= 41;
-    if (ms_passed == 40) {
+    if (ms_passed % MS_PER_FRAME == 0) {
         generate_meteor();
         gameOverFlag = drawField();
         if (!gameOverFlag)
-            updater();
+            updateField();
     }
     sei();
 }
@@ -76,6 +78,10 @@ int main() {
         if ((high % 32) > 4 && (high % 32) < 28)
             Field.ship = x;
     }
-    cli();
-    // sound and UART instraction;
+
+    USART_Init();
+    char str[40];
+    sprintf(str, "GAME OVER\nYour score: %d ms\n", ms_passed / 2);
+    UART_Send_Str(str);
+    // sound instraction;
 }

@@ -1,8 +1,13 @@
-#include "game.h"
 #include "spi.h"
+#include "game.h"
+
 
 extern field Field;
 int splitter = 0;
+
+const uint8_t MAX_SHOTS = 10;
+const uint8_t MAX_METEORS = 32;
+const uint8_t SPEED_METEOR_BY_SHOT = 7;
 
 void clear() {
     for (int i = 1; i <= 8; ++i)
@@ -10,12 +15,12 @@ void clear() {
 }
 
 void FIELD_Init() {
-    for (int i = 0; i < 10; ++i) {
+    for (int i = 0; i < MAX_SHOTS; ++i) {
         Field.shots[i].x = 0;
         Field.shots[i].y = 0;
     }
     
-    for (int i = 0; i < 32; ++i) {
+    for (int i = 0; i < MAX_METEORS; ++i) {
         Field.meteors[i].x = 0;
         Field.meteors[i].y = 0;
     }
@@ -27,20 +32,20 @@ void shoot() {
     piu.y = 0x02000000;
     
     Field.shot_counter += 1;
-    Field.shot_counter %= 10;
+    Field.shot_counter %= MAX_SHOTS;
 
     Field.shots[Field.shot_counter] = piu;
 }
 
 void generate_meteor() {
-    if (rand() % 41) return;
-    uint8_t x = rand() % 8;
+    if (rand() % 42) return;
+
     meteor met;
-    met.x = x;
+    met.x = rand() % 8;
     met.y = 0x00000080;
     
     Field.meteor_counter += 1;
-    Field.meteor_counter %= 32;
+    Field.meteor_counter %= MAX_METEORS;
 
     Field.meteors[Field.meteor_counter] = met;
 }
@@ -83,20 +88,19 @@ int isGameOver(meteor met) {
     return 0;
 }
 
-
-void updater() {
-    if (splitter++ % 7 == 0) {
-        for (int i = 0; i < 32; ++i) {
+void updateField() {
+    if (splitter++ % SPEED_METEOR_BY_SHOT == 0) {
+        for (int i = 0; i < MAX_METEORS; ++i) {
             Field.meteors[i].y = upd_meteor(Field.meteors[i].y);
         }
     }
 
-    for (int i = 0; i < 10; ++i) {
+    for (int i = 0; i < MAX_SHOTS; ++i) {
         Field.shots[i].y = upd_shot(Field.shots[i].y);
     }
     
-    for (int i = 0; i < 10; ++i) {
-        for (int j = 0; j < 32; ++j) {
+    for (int i = 0; i < MAX_SHOTS; ++i) {
+        for (int j = 0; j < MAX_METEORS; ++j) {
             if (isCollision(Field.meteors[j], Field.shots[i])) {
                 Field.meteors[j].y = 0;
                 Field.shots[i].y = 0;
@@ -112,10 +116,10 @@ int drawField()
         field[i] = 0;
     }
 
-    for (int i = 0; i < 10; ++i) {
+    for (int i = 0; i < MAX_SHOTS; ++i) {
         field[Field.shots[i].x] |= Field.shots[i].y;
     }
-    for (int i = 0; i < 32; ++i) {
+    for (int i = 0; i < MAX_METEORS; ++i) {
         field[Field.meteors[i].x] |= Field.meteors[i].y;
     }
     field[Field.ship - 1] ^= 0x01000000;
@@ -127,7 +131,7 @@ int drawField()
         SPI_WriteLine(i + 1, field[i]);
     }
     
-    for (int i = 0; i < 32; ++i) {
+    for (int i = 0; i < MAX_METEORS; ++i) {
         if (isGameOver(Field.meteors[i]))
             return 1;
     }

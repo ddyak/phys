@@ -2,8 +2,6 @@
 
 #include <stdint.h>
 
-void clear();
-
 typedef struct {
     uint32_t x;
     uint32_t y;
@@ -19,7 +17,7 @@ typedef struct {
     shot shots[10];
     uint8_t meteor_counter;
     meteor meteors[32];
-
+    
     int ship;
 } field;
 
@@ -29,8 +27,6 @@ void shoot();
 
 void generate_meteor();
 
-uint32_t upd(uint32_t line);
-
 int drawField();
 
-void updater();
+void updateField();
