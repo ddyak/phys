@@ -1,6 +1,7 @@
 #pragma once
+#include <stdint.h>
 
-int USART_Receive();
+uint8_t USART_Receive();
 
 void USART_Init();
 

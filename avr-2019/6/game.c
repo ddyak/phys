@@ -7,7 +7,7 @@ int splitter = 0;
 
 const uint8_t MAX_SHOTS = 10;
 const uint8_t MAX_METEORS = 32;
-const uint8_t SPEED_METEOR_BY_SHOT = 7;
+const uint8_t SPEED_METEOR_BY_SHOT = 20;
 
 void clear() {
     for (int i = 1; i <= 8; ++i)
@@ -38,7 +38,7 @@ void shoot() {
 }
 
 void generate_meteor() {
-    if (rand() % 42) return;
+    if (rand() % 52) return;
 
     meteor met;
     met.x = rand() % 8;

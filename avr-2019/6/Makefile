@@ -6,5 +6,3 @@ ttyUSB0:
 
 out.elf: main.c spi.c game.c uart.c
 	avr-gcc -g -O3 -mmcu=atmega2560 -o out.elf main.c spi.c game.c uart.c
-
-

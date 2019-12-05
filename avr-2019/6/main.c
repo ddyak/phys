@@ -69,19 +69,31 @@ int main() {
     BUTTON_Init();
     sei();
 
-    FIELD_Init();
-
     while(1) {
-        if (gameOverFlag == 1) break;
-    	uint8_t high = ADCH;
-        uint8_t x = high / 32;
-        if ((high % 32) > 4 && (high % 32) < 28)
-            Field.ship = x;
-    }
+        gameOverFlag = 0;
+        ms_passed = 0;
+        FIELD_Init();
+        while(1) {
+            if (gameOverFlag == 1) break;
+            uint8_t high = ADCH;
+            uint8_t x = high / 32;
+            if ((high % 32) > 4 && (high % 32) < 28)
+                Field.ship = x;
+        }
 
-    USART_Init();
-    char str[40];
-    sprintf(str, "GAME OVER\nYour score: %d ms\n", ms_passed / 2);
-    UART_Send_Str(str);
+        USART_Init();
+        char str[40];
+        sprintf(str, "GAME OVER\nYour score: %ld ms\n", ms_passed / 2);
+        UART_Send_Str(str);
+        
+        cli();
+        while (1) {
+            uint8_t new_game = USART_Receive();
+            if (new_game == '1')
+                break; 
+        }
+        srand(Field.ship);
+        sei();
+    }
     // sound instraction;
 }
