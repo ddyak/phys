@@ -83,17 +83,17 @@ void print_string(const char* str) {
 
 void add_new_symbol() {
 	PORTB = (0 << RS);
-	PORTA = 0b01000000; strob();
+	PORTA = 0b01001000; strob();
 	PORTB = (1 << RS);
 	
-	PORTA = 0b10000010;	strob();
-	PORTA = 0b10000001;	strob();
-	PORTA = 0b10011001;	strob();
-	PORTA = 0b10000001;	strob();
-	PORTA = 0b10011001;	strob();
-	PORTA = 0b10000001;	strob();
-	PORTA = 0b10000010;	strob();
-	PORTA = 0b10000000;	strob();
+	PORTA = 0b00000010;	strob();
+	PORTA = 0b00000001;	strob();
+	PORTA = 0b00011001;	strob();
+	PORTA = 0b00000001;	strob();
+	PORTA = 0b00011001;	strob();
+	PORTA = 0b00000001;	strob();
+	PORTA = 0b00000010;	strob();
+	PORTA = 0b00000000;	strob();
 
 	PORTB = (0 << RS);
 	PORTA = 0b10000000; strob();
@@ -127,7 +127,7 @@ int main() {
 	print_ASCII_by_num(1, 0, 15);
 
 	for (int i = 0; ;++i) {
-		int a = i;
+		unsigned int a = i;
 		int digits = 0;
 		while(a) {
 			print_ASCII_by_num(a % 10 + '0', 0, 14 - digits++);	
