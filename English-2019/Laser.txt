@@ -1,0 +1,16 @@
+Good morning. My name is Daniil Yakovlev and I'm a student at the physics department of NSU. The theme of my presentation is "Laser: supertool of 20th century".
+
+My presentation contains the following parts: Introduction. Laser properties. Applications. Conclusion.
+
+The word laser is an acronym that means light amplification by stimulated emission of radiation. More specifically, a laser is a device that produces a very special kind of light. The beam that is emitted by the laser differs from the light that comes out of a flashlight in four basic ways.
+
+Laser light is intensive. Intensity is a measure of power per unit area. An ordinary light bulb emits more light than a small laser, but that light spreads out all over the room.
+Laser beams are narrow and will not spread out like ordinary light beams. This quality is called directionality. 
+Laser light is coherent. This means that all the light waves coming out of the laser are lined up with each other. 
+Laser light is monochromatic. It means that lasers produce light of only one colour. In turn, ordinary light includes the entire visible spectrum. Mixed together, they come out white.
+
+Lasers have an incredible amount of applications. Lasers are already common place items among military. In medicine lasers can do what a knife can't: weld the retina back to the eyeball. In science and technology, lasers are of great importance. They allow us to study the properties of various materials and cut steel.
+ 
+Thus, the laser is the tool with very useful properties, which has found its application in various areas of our lives.
+
+Thanks for your attention. 

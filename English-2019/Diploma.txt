@@ -1,0 +1,19 @@
+Good morning. As part of my graduate work, I develop a software package to reconstruct particle decays. In particular, I work at the reconstruction algorithm called Decay Tree Fitter for Super C-Tau Factory.
+
+Let's briefly go over the content. We will describe the problems and discuss existing solutions, propose our solution and we will draw conclusion.
+
+So, What is Super C-Tau Factory? This is a project of the electron-positron collider in Novosibirsk. It will operate at total energies from 2 to 5 GeV with unprecedented high luminosity of 10 to the 35. The main purpose of the experiments at the collider is search for effects of CP-violation in the decays of charmed particles. The data, which are planned to record, by 4 orders exceed everything that has been recorded so far in any other experiment.
+
+In order to analyze detector events, it is necessary to be able to reconstruct these events. Most particles are unstable and they have a lifetime of 10 in the minus 12 or less. The study of such particles requires a reconstruction through their decay products. Therefore, the algorithm is needed to restore whole decay tree. An example of such decay is shown in the figure.
+
+Today Belle 2 in Japan and the LHCb experiment at CERN have the most powerful reconstruction tools. We develop our own tool based on their experience.
+
+Vertex fitting is a least squares minimization problem. The best least squares estimator is the solution of this problem. A Kalman Filter is an iterative approach to find the estimator by defining a series of constraints on a hypothesis. A constraint is knowledge of parameters from measurements and symmetries, and a hypothesis is a set of particle parameters in this case. I will not go into details. Performing last expression several times, we solve the least-squares problem and find the optimal model parameters.
+
+Let me demonstrate the effectiveness of the method using the example of decay that we saw on slide a couple of minutes ago. Let's apply mass constrain to piones. We see fitted mass of the Kaon (green) and the mass before the fit (black). The mass distribution is centred around the true value after performing the fits with a pion mass constraint. The resolution has slightly improved as well. 
+
+Thus, we made sure that the iterative approach works and is suitable for restoring the decay tree.
+
+In the future I am planning to add support for previously unaccounted particle classes and the corresponding constraints. Also I am going to implement this algorithm in Super C Tau Factory framework called Aurora.
+
+Thanks for your attention!

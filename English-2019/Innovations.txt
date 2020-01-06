@@ -1,0 +1,15 @@
+Good morning. My name is Daniil Yakovlev and I'm a student of the physics department of NSU. The theme of my presentation is "Innovations: Robots and VR".
+
+My presentation contains the following parts: Introduction. Robots. VR. Conclusion.
+
+Currently, active development is underway in the field of robotics and virtual reality systems.
+
+Many of robots, that are used today, do jobs that are especially difficult for human workers. The robotics revolution has already begun to change the kind of work that people do. The borind and dangerous jobs are now did by robots. For example, robots are particularly useful in the auto-manufacturing industry where parts of automobile must be welded together. New types of robots are fitted with video cameras and other sensing devices that can detech heat, texture, size and sound. It is these robots that are used in space projects, nuclear reactor stations and underwater exploration research. Robots also have disadvantage. They will leave many people without work.
+
+In laboratories, systems are developed that will allow a person to control a robot using an exoskeleton, which includes a virtual reality system.
+
+The virual reality system consists of a helmet with a color display in fron of each eye, and wide-angle lenses. This system has a huge number of potential applications. Now virual reality helmet is already used in video games. VR technology can give us the opportunity to visit wherever we want, for example in space. In addition, it can be applied in education and design. But, like computers, there are disadvantages: harm to the eyes and child addiction.
+
+Thus, robots and virtual reality are promising areas due to their unique applications.
+
+Thanks for your attention. 
