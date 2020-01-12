@@ -1,0 +1,19 @@
+Good morning. As part of my graduate work, I develop the reconstruction algorithm for Super C-Tau Factory called Decay Tree Fitter.
+
+Let's briefly go over the contents. We will describe the problems and discuss existing solutions, propose our solution and we will draw conclusion.
+
+So, What is Super C-Tau Factory? This is a project of the electron-positron collider in Novosibirsk. It will operate at total energies from 2 to 5 GeV with unprecedented high luminosity. The main purpose of the experiments at the collider is search for effects of CP-violation in the decays of charmed particles.
+
+So, Most particles are unstable and they have a nanosecond lifetime and less. The study of such particles requires a reconstruction through their decay products. Therefore, the algorithm is needed to restore whole decay tree. An example of such decay is shown in the figure.
+
+Today Belle 2 in Japan and the LHCb experiment at CERN have the most powerful reconstruction tools. We develop our own tool based on their experience.
+
+Vertex fitting is a least squares minimization problem. The best least squares estimator is the solution of this problem. A Kalman Filter is an iterative approach to find the estimator. Let's not go into details. Performing last expression several times, we solve the least-squares problem and find the optimal model parameters.
+
+Let me demonstrate the effectiveness of the method using the decay of a B-meson as an example. Let's apply mass constrain to piones. We see fitted mass of the Kaon (green) and the mass before the fit (black). The mass distribution is centred around the true value after fit. The resolution has slightly improved as well. 
+
+Thus, we made sure that the iterative approach works and is suitable for restoring the decay tree.
+
+In the future I am planning to add support for previously unaccounted particle classes and the corresponding constraints. Also I am going to implement this algorithm in Super C Tau Factory framework called Aurora.
+
+Thanks for your attention!
